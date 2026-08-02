@@ -1,65 +1,137 @@
-import Image from "next/image";
+import Link from "next/link";
+import connectDB from "@/lib/db";
+import Property from "@/models/Property";
+import "@/models/User";
+import Hero from "@/components/Hero";
+import SearchFilters from "@/components/SearchFilters";
+import FavoriteButton from "@/components/FavoriteButton";
 
-export default function Home() {
+async function getProperties(searchParams: { [key: string]: string | undefined }) {
+  await connectDB();
+
+  const query: any = { status: "available" };
+
+  if (searchParams.city) {
+    query["location.city"] = { $regex: searchParams.city, $options: "i" };
+  }
+  if (searchParams.listingType) {
+    query.listingType = searchParams.listingType;
+  }
+  if (searchParams.propertyType) {
+    query.propertyType = searchParams.propertyType;
+  }
+  if (searchParams.bedrooms) {
+    query.bedrooms = { $gte: Number(searchParams.bedrooms) };
+  }
+  if (searchParams.minPrice || searchParams.maxPrice) {
+    query.price = {};
+    if (searchParams.minPrice) query.price.$gte = Number(searchParams.minPrice);
+    if (searchParams.maxPrice) query.price.$lte = Number(searchParams.maxPrice);
+  }
+
+  const properties = await Property.find(query)
+    .populate("agent", "name email")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return JSON.parse(JSON.stringify(properties));
+}
+
+function refCode(id: string) {
+  return `EH-${id.slice(-4).toUpperCase()}`;
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const params = await searchParams;
+  const properties = await getProperties(params);
+  const hasFilters = Object.keys(params).length > 0;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main>
+      <Hero />
+      <SearchFilters />
+
+      <div id="listings" className="max-w-6xl mx-auto px-4 py-12 scroll-mt-16">
+        <div className="mb-10">
+          <p className="font-mono text-xs uppercase tracking-widest text-brass-dark mb-2">
+            Listings
           </p>
+          <h2 className="font-display text-3xl text-ink">
+            {hasFilters ? `${properties.length} properties found` : "Current properties"}
+          </h2>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {properties.length === 0 ? (
+          <p className="text-slate">
+            {hasFilters
+              ? "No properties match your filters. Try adjusting your search."
+              : "No properties listed yet."}
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.map((property: any) => (
+              <Link
+                key={property._id}
+                href={`/properties/${property._id}`}
+                className="group border border-ink/10 rounded-xl overflow-hidden bg-white/40 hover:border-brass transition-colors"
+              >
+                <div className="relative h-48 bg-ink/5 flex items-center justify-center text-slate text-sm">
+                  {property.images?.length > 0 ? (
+                    <img
+                      src={property.images[0]}
+                      alt={property.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>No image</span>
+                  )}
+                  {property.images?.length > 1 && (
+                    <span className="absolute bottom-2 right-2 bg-ink/80 text-stone text-xs font-mono px-2 py-1 rounded-full">
+                      +{property.images.length - 1}
+                    </span>
+                  )}
+                  <div className="absolute top-2 right-2">
+                    <FavoriteButton propertyId={property._id} />
+                  </div>
+                </div>
+
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className={`text-xs font-mono uppercase tracking-wide ${
+                        property.listingType === "sale" ? "text-brass-dark" : "text-deep-green"
+                      }`}
+                    >
+                      {property.listingType === "sale" ? "For Sale" : "For Rent"}
+                    </span>
+                    <span className="text-xs font-mono text-slate">{refCode(property._id)}</span>
+                  </div>
+
+                  <h2 className="font-display text-lg text-ink truncate">{property.title}</h2>
+                  <p className="text-slate text-sm truncate">
+                    {property.location?.address}, {property.location?.city}
+                  </p>
+
+                  <div className="mt-3 pt-3 border-t border-brass/30">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono font-medium text-ink">
+                        PKR {property.price?.toLocaleString()}
+                      </span>
+                      <span className="text-xs text-slate">
+                        {property.bedrooms} bed · {property.bathrooms} bath
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
