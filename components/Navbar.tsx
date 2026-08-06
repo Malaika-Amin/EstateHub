@@ -23,10 +23,15 @@ export default function Navbar() {
               Favorites
             </Link>
           )}
-          {role === "agent" && (
-            <Link href="/agent/listings/new" className="hover:text-ink transition-colors">
-              New Listing
-            </Link>
+        {role === "agent" && (
+            <>
+              <Link href="/agent/listings" className="hover:text-ink transition-colors">
+                My Listings
+              </Link>
+              <Link href="/agent/listings/new" className="hover:text-ink transition-colors">
+                New Listing
+              </Link>
+            </>
           )}
         </nav>
 
