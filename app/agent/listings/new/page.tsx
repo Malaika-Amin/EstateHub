@@ -50,22 +50,14 @@ export default function NewListingPage() {
 
     try {
       const uploadedUrls: string[] = [];
-
       for (const file of Array.from(files)) {
         const form = new FormData();
         form.append("file", file);
-
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: form,
-        });
-
+        const res = await fetch("/api/upload", { method: "POST", body: form });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Upload failed");
-
         uploadedUrls.push(data.url);
       }
-
       setImages((prev) => [...prev, ...uploadedUrls]);
     } catch (err: any) {
       setError(err.message);
@@ -106,7 +98,6 @@ export default function NewListingPage() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Failed to create listing");
 
       router.push("/");
@@ -117,12 +108,12 @@ export default function NewListingPage() {
     }
   };
 
+  const inputClass =
+    "w-full bg-fog rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent";
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      <p className="font-mono text-xs uppercase tracking-widest text-brass-dark mb-2">
-        Agent Dashboard
-      </p>
-      <h1 className="font-display text-3xl text-ink mb-6">Create New Listing</h1>
+      <h1 className="text-3xl font-bold text-ink mb-6">Create New Listing</h1>
 
       {error && (
         <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md">{error}</div>
@@ -135,7 +126,7 @@ export default function NewListingPage() {
           required
           value={formData.title}
           onChange={handleChange}
-          className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+          className={inputClass}
         />
 
         <textarea
@@ -145,7 +136,7 @@ export default function NewListingPage() {
           rows={4}
           value={formData.description}
           onChange={handleChange}
-          className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+          className={inputClass}
         />
 
         <div className="grid grid-cols-2 gap-4">
@@ -156,26 +147,15 @@ export default function NewListingPage() {
             required
             value={formData.price}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
-
-          <select
-            name="listingType"
-            value={formData.listingType}
-            onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
-          >
+          <select name="listingType" value={formData.listingType} onChange={handleChange} className={inputClass}>
             <option value="sale">For Sale</option>
             <option value="rent">For Rent</option>
           </select>
         </div>
 
-        <select
-          name="propertyType"
-          value={formData.propertyType}
-          onChange={handleChange}
-          className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
-        >
+        <select name="propertyType" value={formData.propertyType} onChange={handleChange} className={inputClass}>
           <option value="house">House</option>
           <option value="apartment">Apartment</option>
           <option value="land">Land</option>
@@ -189,14 +169,14 @@ export default function NewListingPage() {
             required
             value={formData.city}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
           <input
             name="address"
             placeholder="Address"
             value={formData.address}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
         </div>
 
@@ -207,7 +187,7 @@ export default function NewListingPage() {
             placeholder="Bedrooms"
             value={formData.bedrooms}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
           <input
             name="bathrooms"
@@ -215,7 +195,7 @@ export default function NewListingPage() {
             placeholder="Bathrooms"
             value={formData.bathrooms}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
           <input
             name="areaSqft"
@@ -223,12 +203,12 @@ export default function NewListingPage() {
             placeholder="Area (sqft)"
             value={formData.areaSqft}
             onChange={handleChange}
-            className="border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+            className={inputClass}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-2">
             Property Images
           </label>
           <input
@@ -262,7 +242,7 @@ export default function NewListingPage() {
         <button
           type="submit"
           disabled={loading || uploading}
-          className="w-full bg-ink text-stone py-2.5 rounded-full font-medium hover:bg-brass-dark transition-colors disabled:opacity-50"
+          className="w-full bg-ink text-paper py-2.5 rounded-full font-semibold hover:bg-accent transition-colors disabled:opacity-50"
         >
           {loading ? "Creating..." : "Create Listing"}
         </button>

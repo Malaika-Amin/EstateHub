@@ -21,7 +21,7 @@ export default function FavoriteButton({
       .then((res) => res.json())
       .then((data) => {
         const favorites = data.favorites || [];
-        setIsFavorited(favorites.some((id: string) => id === propertyId));
+        setIsFavorited(favorites.some((f: any) => f._id === propertyId || f === propertyId));
       })
       .catch(() => {});
   }, [status, propertyId]);
@@ -64,8 +64,8 @@ export default function FavoriteButton({
         width="20"
         height="20"
         viewBox="0 0 24 24"
-        fill={isFavorited ? "#B8925A" : "none"}
-        stroke={isFavorited ? "#B8925A" : "currentColor"}
+        fill={isFavorited ? "#C1440E" : "none"}
+        stroke={isFavorited ? "#C1440E" : "currentColor"}
         strokeWidth="2"
       >
         <path d="M12 21s-6.716-4.35-9.428-8.06C.24 9.73 1.02 5.9 4.2 4.55c2.1-.9 4.4-.1 5.8 1.75C11.4 4.45 13.7 3.65 15.8 4.55c3.18 1.35 3.96 5.18 1.628 8.39C18.716 16.65 12 21 12 21z" />

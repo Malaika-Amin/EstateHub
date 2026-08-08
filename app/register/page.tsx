@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
-const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
@@ -33,7 +33,6 @@ const [formData, setFormData] = useState({
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || "Something went wrong");
 
       router.push("/login?registered=true");
@@ -45,12 +44,9 @@ const [formData, setFormData] = useState({
   };
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center bg-stone px-4">
-      <div className="w-full max-w-md bg-white border border-ink/10 p-8 rounded-2xl">
-        <p className="font-mono text-xs uppercase tracking-widest text-brass-dark mb-2">
-          Join EstateHub
-        </p>
-        <h1 className="font-display text-2xl text-ink mb-6">Create your account</h1>
+    <div className="flex min-h-[80vh] items-center justify-center bg-paper px-4">
+      <div className="w-full max-w-md bg-fog p-8 rounded-2xl">
+        <h1 className="text-2xl font-bold text-ink mb-6">Create your account</h1>
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md">{error}</div>
@@ -58,7 +54,7 @@ const [formData, setFormData] = useState({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-1">
               Full Name
             </label>
             <input
@@ -67,12 +63,12 @@ const [formData, setFormData] = useState({
               required
               value={formData.name}
               onChange={handleChange}
-              className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+              className="w-full bg-paper rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-1">
               Email
             </label>
             <input
@@ -81,12 +77,12 @@ const [formData, setFormData] = useState({
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+              className="w-full bg-paper rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-1">
               Password
             </label>
             <input
@@ -96,19 +92,19 @@ const [formData, setFormData] = useState({
               minLength={6}
               value={formData.password}
               onChange={handleChange}
-              className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+              className="w-full bg-paper rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-1">
               I am a
             </label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+              className="w-full bg-paper rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             >
               <option value="buyer">Buyer / Renter</option>
               <option value="agent">Agent</option>
@@ -116,7 +112,7 @@ const [formData, setFormData] = useState({
           </div>
 
           <div>
-            <label className="block text-xs font-mono uppercase tracking-wide text-slate mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-1">
               Phone (WhatsApp number, with country code)
             </label>
             <input
@@ -125,14 +121,14 @@ const [formData, setFormData] = useState({
               placeholder="+92 300 1234567"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full border border-ink/15 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brass"
+              className="w-full bg-paper rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-ink text-stone py-2.5 rounded-full font-medium hover:bg-brass-dark transition-colors disabled:opacity-50"
+            className="w-full bg-ink text-paper py-2.5 rounded-full font-semibold hover:bg-accent transition-colors disabled:opacity-50"
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
@@ -140,7 +136,7 @@ const [formData, setFormData] = useState({
 
         <p className="text-sm text-center mt-5 text-slate">
           Already have an account?{" "}
-          <Link href="/login" className="text-brass-dark font-medium">
+          <Link href="/login" className="text-accent font-semibold">
             Sign in
           </Link>
         </p>

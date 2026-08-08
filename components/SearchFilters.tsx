@@ -50,7 +50,7 @@ export default function SearchFilters() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border border-ink/10 rounded-2xl p-5 -mt-16 relative z-10 mx-4 max-w-5xl sm:mx-auto shadow-lg"
+     className="bg-paper rounded-2xl p-5 -mt-16 relative z-10 mx-4 max-w-5xl sm:mx-auto shadow-xl"
     >
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <input
@@ -121,7 +121,7 @@ export default function SearchFilters() {
       <div className="flex items-center gap-3 mt-4">
         <button
           type="submit"
-          className="bg-ink text-stone px-6 py-2 rounded-full text-sm font-medium hover:bg-brass-dark transition-colors"
+         className="bg-ink text-paper px-6 py-2 rounded-full text-sm font-semibold hover:bg-accent transition-colors"
         >
           Search
         </button>

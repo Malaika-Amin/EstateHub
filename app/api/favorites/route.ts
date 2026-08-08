@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-// GET - fetch current user's favorite property IDs
+// GET - fetch current user's favorite properties (fully populated)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -13,7 +13,10 @@ export async function GET() {
     }
 
     await connectDB();
-    const user = await User.findById((session.user as any).id).select("favorites");
+    const user = await User.findById((session.user as any).id).populate({
+      path: "favorites",
+      populate: { path: "agent", select: "name email" },
+    });
 
     return NextResponse.json({ favorites: user?.favorites || [] }, { status: 200 });
   } catch (error) {
@@ -21,7 +24,7 @@ export async function GET() {
   }
 }
 
-// POST - toggle a property in favorites (add if not present, remove if present)
+// POST - toggle a property in/out of favorites
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
