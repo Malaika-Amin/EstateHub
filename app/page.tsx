@@ -4,6 +4,9 @@ import "@/models/User";
 import Hero from "@/components/Hero";
 import SearchFilters from "@/components/SearchFilters";
 import PropertyCard from "@/components/PropertyCard";
+import StatsBar from "@/components/StatsBar";
+import WhyEstateHub from "@/components/WhyEstateHub";
+import BrowseByCity from "@/components/BrowseByCity";
 
 async function getProperties(searchParams: { [key: string]: string | undefined }) {
   await connectDB();
@@ -37,9 +40,10 @@ export default async function HomePage({
   const hasFilters = Object.keys(params).length > 0;
 
   return (
-    <main>
+   <main>
       <Hero />
       <SearchFilters />
+      <StatsBar />
 
       <div id="listings" className="max-w-6xl mx-auto px-4 py-16 scroll-mt-16">
         <h2 className="text-3xl font-bold text-ink mb-10">
@@ -58,6 +62,8 @@ export default async function HomePage({
           </div>
         )}
       </div>
+      <BrowseByCity /> 
+      <WhyEstateHub />
     </main>
   );
 }

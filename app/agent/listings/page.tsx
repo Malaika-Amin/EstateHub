@@ -57,7 +57,7 @@ export default function MyListingsPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-2">
         <h1 className="text-3xl font-bold text-ink">My Listings</h1>
         <Link
           href="/agent/listings/new"
@@ -66,6 +66,13 @@ export default function MyListingsPage() {
           + New Listing
         </Link>
       </div>
+
+      <Link
+        href="/agent/profile"
+        className="text-sm text-slate hover:text-accent transition-colors inline-block mb-8"
+      >
+        Edit your public profile
+      </Link>
 
       {listings.length === 0 ? (
         <p className="text-slate">You haven't posted any listings yet.</p>
