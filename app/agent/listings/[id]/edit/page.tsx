@@ -3,6 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
+
+const AMENITY_OPTIONS = ["Parking", "Garden", "Security", "Generator", "Elevator", "Gym", "Pool", "Balcony", "Furnished"];
+
+const inputClass =
+  "w-full bg-paper rounded-md px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent";
 
 export default function EditListingPage() {
   const router = useRouter();
@@ -22,6 +28,7 @@ export default function EditListingPage() {
     areaSqft: "",
     status: "available",
   });
+  const [amenities, setAmenities] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -53,6 +60,7 @@ export default function EditListingPage() {
           status: p.status || "available",
         });
         setImages(p.images || []);
+        setAmenities(p.amenities || []);
       })
       .catch((err) => setError(err.message))
       .finally(() => setFetching(false));
@@ -72,6 +80,11 @@ export default function EditListingPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const toggleAmenity = (item: string, checked: boolean) => {
+    if (checked) setAmenities((prev) => [...prev, item]);
+    else setAmenities((prev) => prev.filter((a) => a !== item));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,6 +136,7 @@ export default function EditListingPage() {
           bathrooms: Number(formData.bathrooms),
           areaSqft: Number(formData.areaSqft),
           images,
+          amenities,
           status: formData.status,
         }),
       });
@@ -138,133 +152,175 @@ export default function EditListingPage() {
     }
   };
 
-  const inputClass =
-    "w-full bg-fog rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent";
+  const sectionAnim = (delay: number) => ({
+    initial: { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4, delay },
+  });
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-ink mb-6">Edit Listing</h1>
+    <div className="max-w-2xl mx-auto px-4 py-16">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <p className="text-sm font-bold uppercase tracking-wide text-accent mb-2">Agent Dashboard</p>
+        <h1 className="text-4xl font-bold text-ink mb-2">Edit Listing</h1>
+        <p className="text-slate mb-10">Update your listing details below.</p>
+      </motion.div>
 
-      {error && <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md">{error}</div>}
+      {error && <div className="mb-6 p-3 bg-red-50 text-red-600 text-sm rounded-md">{error}</div>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          placeholder="Title"
-          required
-          value={formData.title}
-          onChange={handleChange}
-          className={inputClass}
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.div {...sectionAnim(0.05)} className="bg-fog rounded-2xl p-6 space-y-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate">Basic Details</p>
 
-        <textarea
-          name="description"
-          placeholder="Description"
-          required
-          rows={4}
-          value={formData.description}
-          onChange={handleChange}
-          className={inputClass}
-        />
-
-        <div className="grid grid-cols-2 gap-4">
           <input
-            name="price"
-            type="number"
-            placeholder="Price"
+            name="title"
+            placeholder="Title"
             required
-            value={formData.price}
+            value={formData.title}
             onChange={handleChange}
             className={inputClass}
           />
-          <select name="listingType" value={formData.listingType} onChange={handleChange} className={inputClass}>
-            <option value="sale">For Sale</option>
-            <option value="rent">For Rent</option>
-          </select>
-        </div>
 
-        <select name="propertyType" value={formData.propertyType} onChange={handleChange} className={inputClass}>
-          <option value="house">House</option>
-          <option value="apartment">Apartment</option>
-          <option value="land">Land</option>
-          <option value="commercial">Commercial</option>
-        </select>
-
-        <select name="status" value={formData.status} onChange={handleChange} className={inputClass}>
-          <option value="available">Available</option>
-          <option value="pending">Pending</option>
-          <option value="sold">Sold</option>
-          <option value="rented">Rented</option>
-        </select>
-
-        <div className="grid grid-cols-2 gap-4">
-          <input
-            name="city"
-            placeholder="City"
+          <textarea
+            name="description"
+            placeholder="Description"
             required
-            value={formData.city}
+            rows={4}
+            value={formData.description}
             onChange={handleChange}
             className={inputClass}
           />
-          <input
-            name="address"
-            placeholder="Address"
-            value={formData.address}
-            onChange={handleChange}
-            className={inputClass}
-          />
-        </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <input
-            name="bedrooms"
-            type="number"
-            placeholder="Bedrooms"
-            value={formData.bedrooms}
-            onChange={handleChange}
-            className={inputClass}
-          />
-          <input
-            name="bathrooms"
-            type="number"
-            placeholder="Bathrooms"
-            value={formData.bathrooms}
-            onChange={handleChange}
-            className={inputClass}
-          />
-          <input
-            name="areaSqft"
-            type="number"
-            placeholder="Area (sqft)"
-            value={formData.areaSqft}
-            onChange={handleChange}
-            className={inputClass}
-          />
-        </div>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              name="price"
+              type="number"
+              placeholder="Price"
+              required
+              value={formData.price}
+              onChange={handleChange}
+              className={inputClass}
+            />
+            <select name="listingType" value={formData.listingType} onChange={handleChange} className={inputClass}>
+              <option value="sale">For Sale</option>
+              <option value="rent">For Rent</option>
+            </select>
+          </div>
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wide text-slate mb-2">
-            Property Images
+          <div className="grid grid-cols-2 gap-4">
+            <select name="propertyType" value={formData.propertyType} onChange={handleChange} className={inputClass}>
+              <option value="house">House</option>
+              <option value="apartment">Apartment</option>
+              <option value="land">Land</option>
+              <option value="commercial">Commercial</option>
+            </select>
+            <select name="status" value={formData.status} onChange={handleChange} className={inputClass}>
+              <option value="available">Available</option>
+              <option value="pending">Pending</option>
+              <option value="sold">Sold</option>
+              <option value="rented">Rented</option>
+            </select>
+          </div>
+        </motion.div>
+
+        <motion.div {...sectionAnim(0.1)} className="bg-fog rounded-2xl p-6 space-y-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate">Location & Size</p>
+
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              name="city"
+              placeholder="City"
+              required
+              value={formData.city}
+              onChange={handleChange}
+              className={inputClass}
+            />
+            <input
+              name="address"
+              placeholder="Address"
+              value={formData.address}
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <input
+              name="bedrooms"
+              type="number"
+              placeholder="Bedrooms"
+              value={formData.bedrooms}
+              onChange={handleChange}
+              className={inputClass}
+            />
+            <input
+              name="bathrooms"
+              type="number"
+              placeholder="Bathrooms"
+              value={formData.bathrooms}
+              onChange={handleChange}
+              className={inputClass}
+            />
+            <input
+              name="areaSqft"
+              type="number"
+              placeholder="Area (sqft)"
+              value={formData.areaSqft}
+              onChange={handleChange}
+              className={inputClass}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div {...sectionAnim(0.15)} className="bg-fog rounded-2xl p-6">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate mb-4">Amenities</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {AMENITY_OPTIONS.map((item) => (
+              <label
+                key={item}
+                className="flex items-center gap-2 text-sm bg-paper rounded-md px-3 py-2.5 cursor-pointer hover:bg-ink/5 transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={amenities.includes(item)}
+                  onChange={(e) => toggleAmenity(item, e.target.checked)}
+                  className="w-4 h-4 accent-accent"
+                />
+                {item}
+              </label>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div {...sectionAnim(0.2)} className="bg-fog rounded-2xl p-6">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate mb-4">Property Images</p>
+          <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-ink/15 rounded-xl py-10 cursor-pointer hover:border-accent hover:bg-paper transition-colors">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate">
+              <path d="M12 16V4m0 0L7 9m5-5l5 5" />
+              <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+            </svg>
+            <span className="text-sm text-slate">
+              {uploading ? "Uploading..." : "Click to upload photos"}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              disabled={uploading}
+              className="hidden"
+            />
           </label>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageUpload}
-            disabled={uploading}
-            className="w-full text-sm"
-          />
-          {uploading && <p className="text-sm text-slate mt-2">Uploading...</p>}
 
           {images.length > 0 && (
-            <div className="grid grid-cols-3 gap-2 mt-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
               {images.map((url) => (
-                <div key={url} className="relative group">
-                  <img src={url} alt="" className="w-full h-24 object-cover rounded-md" />
+                <div key={url} className="relative group aspect-square">
+                  <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
                   <button
                     type="button"
                     onClick={() => removeImage(url)}
-                    className="absolute top-1 right-1 bg-ink/80 text-white text-xs w-5 h-5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1.5 right-1.5 bg-ink text-paper text-xs w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                   >
                     ×
                   </button>
@@ -272,15 +328,16 @@ export default function EditListingPage() {
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <button
+        <motion.button
+          {...sectionAnim(0.25)}
           type="submit"
           disabled={loading || uploading}
-          className="w-full bg-ink text-paper py-2.5 rounded-full font-semibold hover:bg-accent transition-colors disabled:opacity-50"
+          className="w-full bg-ink text-paper py-3.5 rounded-full font-semibold hover:bg-accent transition-colors disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save Changes"}
-        </button>
+        </motion.button>
       </form>
     </div>
   );

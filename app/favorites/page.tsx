@@ -19,7 +19,23 @@ export default function FavoritesPage() {
       .finally(() => setLoading(false));
   }, [status]);
 
-  if (status === "loading" || loading) return <p className="p-8">Loading...</p>;
+ if (status === "loading" || loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="h-8 w-48 bg-fog rounded animate-pulse mb-8" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="h-64 bg-fog rounded-xl mb-3" />
+              <div className="h-4 bg-fog rounded w-1/3 mb-2" />
+              <div className="h-5 bg-fog rounded w-2/3 mb-2" />
+              <div className="h-4 bg-fog rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (status !== "authenticated") {
     return (

@@ -41,11 +41,11 @@ export default function PropertyGallery({
 
   return (
     <div>
-      <div className="relative h-96 bg-ink/5 rounded-2xl overflow-hidden mb-3 group">
+   <div className="relative aspect-[16/10] bg-ink/5 rounded-2xl overflow-hidden mb-3 group">
         <img
           src={images[activeIndex]}
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
 
         {images.length > 1 && (

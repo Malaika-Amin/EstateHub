@@ -2,12 +2,24 @@ export default function WhatsAppButton({
   phone,
   propertyTitle,
   refCode,
+  email,
 }: {
   phone: string;
   propertyTitle: string;
   refCode: string;
+  email?: string;
 }) {
-  if (!phone) return null;
+  if (!phone) {
+    if (!email) return null;
+    return (
+      <a
+        href={`mailto:${email}?subject=${encodeURIComponent(`Inquiry: ${propertyTitle} (${refCode})`)}`}
+        className="inline-flex items-center gap-2 bg-ink text-paper px-5 py-3 rounded-full font-medium hover:bg-accent transition-colors w-full justify-center"
+      >
+        Contact Agent by Email
+      </a>
+    );
+  }
 
  let cleanPhone = phone.replace(/[^0-9]/g, "");
 

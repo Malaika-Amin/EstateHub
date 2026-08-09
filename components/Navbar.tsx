@@ -34,8 +34,11 @@ export default function Navbar() {
               <Link href="/agent/listings" className="hover:text-accent transition-colors">
                 My Listings
               </Link>
-              <Link href="/agent/listings/new" className="hover:text-accent transition-colors">
+             <Link href="/agent/listings/new" className="hover:text-accent transition-colors">
                 New Listing
+              </Link>
+              <Link href="/agent/bookings" className="hover:text-accent transition-colors">
+                Bookings
               </Link>
             </>
           )}
