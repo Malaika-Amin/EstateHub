@@ -5,9 +5,11 @@ import { useState, useEffect, useCallback } from "react";
 export default function PropertyGallery({
   images,
   title,
+  actionSlot,
 }: {
   images: string[];
   title: string;
+  actionSlot?: React.ReactNode;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -41,13 +43,18 @@ export default function PropertyGallery({
 
   return (
     <div>
-   <div className="relative aspect-[16/10] bg-ink/5 rounded-2xl overflow-hidden mb-3 group">
+  <div className="relative aspect-[16/10] max-h-[520px] bg-ink/5 rounded-2xl overflow-hidden mb-3 group flex items-center justify-center">
         <img
           src={images[activeIndex]}
           alt={title}
-          className="w-full h-full object-contain"
+          className="max-w-full max-h-full w-auto h-auto object-contain"
         />
 
+        {actionSlot && (
+          <div className="absolute top-3 right-3 z-10 bg-paper rounded-full shadow-md">
+            {actionSlot}
+          </div>
+        )}
         {images.length > 1 && (
           <>
             <button

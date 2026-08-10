@@ -14,9 +14,8 @@ async function getAgents() {
     })
   );
 
-  return JSON.parse(JSON.stringify(agentsWithCounts));
+  return JSON.parse(JSON.stringify(agentsWithCounts.filter((a) => a.listingCount > 0)));
 }
-
 export default async function AgentsPage() {
   const agents = await getAgents();
 

@@ -9,6 +9,7 @@ import BookingRequest from "@/components/BookingRequest";
 import PropertyMap from "@/components/PropertyMap";
 import PropertyCard from "@/components/PropertyCard";
 import Link from "next/link";
+export const revalidate = 60;
 
 function refCode(id: string) {
   return `EH-${id.slice(-4).toUpperCase()}`;
@@ -47,12 +48,11 @@ export default async function PropertyDetailPage({
     <main>
       {/* Full-width gallery */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
-        <div className="relative">
-          <PropertyGallery images={p.images} title={p.title} />
-          <div className="absolute top-4 right-4 z-10">
-            <FavoriteButton propertyId={p._id} />
-          </div>
-        </div>
+       <PropertyGallery
+          images={p.images}
+          title={p.title}
+          actionSlot={<FavoriteButton propertyId={p._id} />}
+        />
       </div>
 
       {/* Two-column layout */}
