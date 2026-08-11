@@ -48,11 +48,7 @@ export default async function PropertyDetailPage({
     <main>
       {/* Full-width gallery */}
       <div className="max-w-7xl mx-auto px-4 pt-8">
-       <PropertyGallery
-          images={p.images}
-          title={p.title}
-          actionSlot={<FavoriteButton propertyId={p._id} />}
-        />
+      <PropertyGallery images={p.images} title={p.title} />
       </div>
 
       {/* Two-column layout */}
@@ -66,11 +62,13 @@ export default async function PropertyDetailPage({
             <span className="text-xs text-slate">{refCode(p._id)}</span>
           </div>
 
-          <h1 className="text-4xl font-bold text-ink mb-1">{p.title}</h1>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-4xl font-bold text-ink mb-1">{p.title}</h1>
+            <FavoriteButton propertyId={p._id} />
+          </div>
           <p className="text-slate mb-6">
             {p.location?.address}, {p.location?.city}
           </p>
-
           <div className="flex items-center gap-6 pb-6 mb-8 border-b border-ink/10">
             <div>
               <p className="text-xl font-bold text-ink">{p.bedrooms}</p>

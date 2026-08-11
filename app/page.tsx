@@ -7,6 +7,7 @@ import PropertyCard from "@/components/PropertyCard";
 import StatsBar from "@/components/StatsBar";
 import WhyEstateHub from "@/components/WhyEstateHub";
 import BrowseByCity from "@/components/BrowseByCity";
+import Link from "next/link";
 
 async function getProperties(searchParams: { [key: string]: string | undefined }) {
   await connectDB();
@@ -36,8 +37,10 @@ export default async function HomePage({
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const params = await searchParams;
-  const properties = await getProperties(params);
+  const allProperties = await getProperties(params);
   const hasFilters = Object.keys(params).length > 0;
+  const properties = hasFilters ? allProperties : allProperties.slice(0, 6);
+  const showExploreMore = !hasFilters && allProperties.length > 6;
 
   return (
    <main>
@@ -50,16 +53,32 @@ export default async function HomePage({
           {hasFilters ? `${properties.length} properties found` : "Explore properties"}
         </h2>
 
-        {properties.length === 0 ? (
+     {properties.length === 0 ? (
           <p className="text-slate">
             {hasFilters ? "No properties match your filters." : "No properties listed yet."}
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-            {properties.map((property: any) => (
-              <PropertyCard key={property._id} property={property} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+              {properties.map((property: any) => (
+                <PropertyCard key={property._id} property={property} />
+              ))}
+            </div>
+
+            {showExploreMore && (
+              <div className="flex justify-center mt-12">
+                <Link
+                  href="/listings"
+                  className="inline-flex items-center gap-2 border border-ink/15 text-ink px-6 py-3 rounded-full font-semibold hover:bg-ink hover:text-paper transition-colors"
+                >
+                  Explore All Properties
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14m-6-6l6 6-6 6" />
+                  </svg>
+                </Link>
+              </div>
+            )}
+          </>
         )}
       </div>
       <BrowseByCity /> 
